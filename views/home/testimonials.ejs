@@ -1,0 +1,162 @@
+<section class="school-info-section">
+  <div class="page-header mb-4">
+    <h1 class="page-title">
+      <i class="fas fa-comments text-primary me-2"></i> Testimonials Management
+    </h1>
+  </div>
+
+  <!-- ➕ ADD TESTIMONIAL -->
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-white border-bottom">
+      <h5 class="mb-0 fw-semibold text-dark">
+        <i class="fas fa-plus-circle text-primary me-2"></i> Add New Testimonial
+      </h5>
+    </div>
+
+    <div class="card-body p-4">
+      <form action="/home/testimonials" method="POST" enctype="multipart/form-data" class="row g-4">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Name</label>
+          <input type="text" name="name" class="form-control shadow-sm" required />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Role / Designation</label>
+          <input type="text" name="role" class="form-control shadow-sm" />
+        </div>
+
+        <div class="col-md-12">
+          <label class="form-label fw-semibold">Message</label>
+          <textarea name="message" rows="3" class="form-control shadow-sm" required></textarea>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Image (optional)</label>
+          <input type="file" name="image" class="form-control shadow-sm" accept="image/*" />
+        </div>
+
+        <div class="col-12 text-end mt-3">
+          <button class="btn btn-primary px-4">
+            <i class="fas fa-save me-2"></i> Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 💬 EXISTING TESTIMONIALS -->
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+      <h5 class="mb-0 text-dark fw-semibold">
+        <i class="fas fa-list text-primary me-2"></i> Existing Testimonials
+      </h5>
+    </div>
+
+    <div class="card-body">
+      <% if (data && data.length > 0) { %>
+        <div class="row g-4">
+          <% data.forEach(item => { %>
+            <div class="col-md-4">
+              <div class="card border-0 shadow-sm h-100 text-center p-3">
+                <% if (item.image) { %>
+                  <img src="<%= item.image %>" class="rounded-circle mx-auto mb-3 shadow-sm" style="width:90px;height:90px;object-fit:cover;">
+                <% } else { %>
+                  <div class="bg-light rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3" style="width:90px;height:90px;">
+                    <i class="fas fa-user fa-2x text-muted"></i>
+                  </div>
+                <% } %>
+
+                <h6 class="fw-bold mb-1"><%= item.name %></h6>
+                <p class="text-muted small mb-2"><%= item.role || "—" %></p>
+                <p class="text-muted small"><em>"<%= item.message %>"</em></p>
+
+                <div class="d-flex justify-content-center gap-2 mt-2">
+                  <!-- Edit -->
+                  <button
+                    class="btn btn-sm btn-outline-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editModal"
+                    data-id="<%= item._id %>"
+                    data-name="<%= item.name %>"
+                    data-role="<%= item.role %>"
+                    data-message="<%= item.message %>"
+                  >
+                    <i class="fas fa-edit"></i>
+                  </button>
+
+                  
+                  <a href="/home/testimonials/<%= item._id %>" 
+                        class="btn btn-sm btn-outline-danger"
+                        onclick="return confirm('Are you sure you want to delete this slider?');">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="text-muted">No testimonials added yet.</p>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<!-- ✏️ EDIT MODAL -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow">
+      <form id="editForm" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="_method" value="PUT" />
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel"><i class="fas fa-edit me-2 text-primary"></i>Edit Testimonial</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body row g-3">
+          <div class="col-md-12">
+            <label class="form-label fw-semibold">New Image (optional)</label>
+            <input type="file" name="image" class="form-control shadow-sm" accept="image/*" />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Name</label>
+            <input type="text" name="name" id="editName" class="form-control shadow-sm" required />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Role</label>
+            <input type="text" name="role" id="editRole" class="form-control shadow-sm" />
+          </div>
+
+          <div class="col-md-12">
+            <label class="form-label fw-semibold">Message</label>
+            <textarea name="message" id="editMessage" rows="3" class="form-control shadow-sm"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn btn-primary"><i class="fas fa-save me-2"></i> Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const editModal = document.getElementById("editModal");
+  const editForm = document.getElementById("editForm");
+
+  editModal.addEventListener("show.bs.modal", function (event) {
+    const button = event.relatedTarget;
+    const id = button.getAttribute("data-id");
+    const name = button.getAttribute("data-name");
+    const role = button.getAttribute("data-role");
+    const message = button.getAttribute("data-message");
+
+    editForm.action = `/home/testimonials/${id}`;
+    editForm.querySelector("#editName").value = name || "";
+    editForm.querySelector("#editRole").value = role || "";
+    editForm.querySelector("#editMessage").value = message || "";
+  });
+</script>

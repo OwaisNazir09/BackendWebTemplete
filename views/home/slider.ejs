@@ -1,0 +1,159 @@
+<section class="school-info-section">
+  <div class="page-header mb-4">
+    <h1 class="page-title">
+      <i class="fas fa-images text-primary me-2"></i> Slider Management
+    </h1>
+  </div>
+
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-white border-bottom">
+      <h5 class="mb-0 fw-semibold text-dark">
+        <i class="fas fa-plus-circle text-primary me-2"></i> Add New Slider
+      </h5>
+    </div>
+    <div class="card-body p-4">
+      <form action="/home/slider" method="POST" enctype="multipart/form-data" class="row g-4">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Image</label>
+          <input type="file" name="imageUrl" class="form-control shadow-sm" accept="image/*" required />
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Caption</label>
+          <input type="text" name="caption" class="form-control shadow-sm" placeholder="Enter caption" />
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Order</label>
+          <input type="number" name="order" class="form-control shadow-sm" placeholder="1" min="1" />
+        </div>
+
+        <div class="col-md-12">
+          <label class="form-label fw-semibold">Description</label>
+          <textarea name="description" class="form-control shadow-sm" rows="2" placeholder="Write a short description..."></textarea>
+        </div>
+
+        <div class="col-12 text-end mt-3">
+          <button class="btn btn-primary px-4">
+            <i class="fas fa-save me-2"></i> Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+      <h5 class="mb-0 text-dark fw-semibold">
+        <i class="fas fa-list text-primary me-2"></i> Existing Sliders
+      </h5>
+    </div>
+
+    <div class="card-body">
+      <% if (data && data.length > 0) { %>
+        <div class="row g-4">
+          <% data.forEach(item => { %>
+            <div class="col-md-4 col-lg-3">
+              <div class="card border-0 shadow-sm h-100">
+                <% if (item.imageUrl) { %>
+                  <img src="<%= item.imageUrl %>" alt="Slider Image" class="card-img-top" style="height:180px; object-fit:cover;">
+                <% } else { %>
+                  <div class="bg-light d-flex align-items-center justify-content-center" style="height:180px;">
+                    <i class="fas fa-image fa-2x text-muted"></i>
+                  </div>
+                <% } %>
+
+                <div class="card-body p-3">
+                  <h6 class="fw-bold mb-1"><%= item.caption || "No Caption" %></h6>
+                  <p class="text-muted small mb-2"><%= item.description || "No description provided." %></p>
+                  <p class="text-muted small mb-2"><i class="fas fa-sort me-1"></i> Order: <%= item.order || "N/A" %></p>
+
+                  <div class="d-flex justify-content-between">
+                    <button 
+                      class="btn btn-sm btn-outline-primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#editModal"
+                      data-id="<%= item._id %>"
+                      data-caption="<%= item.caption %>"
+                      data-description="<%= item.description %>"
+                      data-order="<%= item.order %>"
+                    >
+                      <i class="fas fa-edit"></i>
+                    </button>
+
+                   <a href="/home/deleteslider/<%= item._id %>" 
+                        class="btn btn-sm btn-outline-danger"
+                        onclick="return confirm('Are you sure you want to delete this slider?');">
+                        <i class="fas fa-trash"></i>
+                        </a>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <p class="text-muted">No sliders have been added yet.</p>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow">
+      <form id="editForm" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="_method" value="PUT" />
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel"><i class="fas fa-edit me-2 text-primary"></i>Edit Slider</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body row g-3">
+          <div class="col-md-12">
+            <label class="form-label fw-semibold">New Image (optional)</label>
+            <input type="file" name="imageUrl" class="form-control shadow-sm" accept="image/*" />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Caption</label>
+            <input type="text" name="caption" id="editCaption" class="form-control shadow-sm" />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Order</label>
+            <input type="number" name="order" id="editOrder" class="form-control shadow-sm" />
+          </div>
+
+          <div class="col-md-12">
+            <label class="form-label fw-semibold">Description</label>
+            <textarea name="description" id="editDescription" rows="2" class="form-control shadow-sm"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn btn-primary"><i class="fas fa-save me-2"></i> Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const editModal = document.getElementById("editModal");
+  const editForm = document.getElementById("editForm");
+
+  editModal.addEventListener("show.bs.modal", function (event) {
+    const button = event.relatedTarget;
+    const id = button.getAttribute("data-id");
+    const caption = button.getAttribute("data-caption");
+    const description = button.getAttribute("data-description");
+    const order = button.getAttribute("data-order");
+
+    editForm.action = `/home/slider/${id}`;
+    editForm.querySelector("#editCaption").value = caption || "";
+    editForm.querySelector("#editDescription").value = description || "";
+    editForm.querySelector("#editOrder").value = order || "";
+  });
+</script>

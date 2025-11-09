@@ -1,0 +1,296 @@
+<section class="school-info-section">
+  <!-- PAGE HEADER -->
+  <div class="page-header mb-4">
+    <h1 class="page-title">
+      <i class="fas fa-school text-primary me-2"></i> School Header Management
+    </h1>
+  </div>
+
+  <!-- ➕ ADD / UPDATE HEADER -->
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-white border-bottom">
+      <h5 class="mb-0 fw-semibold text-dark">
+        <i class="fas fa-plus-circle text-primary me-2"></i> Add / Update School Header
+      </h5>
+    </div>
+
+    <div class="card-body p-4">
+      <form
+        action="/home/header"
+        method="POST"
+        enctype="multipart/form-data"
+        class="row g-4"
+      >
+        <div class="col-md-12">
+          <label class="form-label fw-semibold">School Name</label>
+          <input
+            type="text"
+            name="schoolName"
+            class="form-control shadow-sm"
+            placeholder="Enter school name"
+            value="<%= data && data[0] ? data[0].schoolName : '' %>"
+            required
+          />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Logo</label>
+          <input
+            type="file"
+            name="logo"
+            class="form-control shadow-sm"
+            accept="image/*"
+          />
+          <% if (data && data[0] && data[0].logo) { %>
+            <img
+              src="<%= data[0].logo %>"
+              alt="Logo"
+              class="img-thumbnail mt-2"
+              style="max-height: 80px;"
+            />
+          <% } %>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Banner Image</label>
+          <input
+            type="file"
+            name="bannerImage"
+            class="form-control shadow-sm"
+            accept="image/*"
+          />
+          <% if (data && data[0] && data[0].bannerImage) { %>
+            <img
+              src="<%= data[0].bannerImage %>"
+              alt="Banner"
+              class="img-thumbnail mt-2"
+              style="max-height: 80px;"
+            />
+          <% } %>
+        </div>
+
+        <div class="col-md-12">
+          <label class="form-label fw-semibold">Tagline</label>
+          <textarea
+            name="tagline"
+            rows="2"
+            class="form-control shadow-sm"
+            placeholder="Enter school tagline"
+          ><%= data && data[0] ? data[0].tagline : '' %></textarea>
+        </div>
+
+        <div class="col-12 text-end mt-3">
+          <button class="btn btn-primary px-4">
+            <i class="fas fa-save me-2"></i>
+            <%= data && data.length > 0 ? "Update" : "Save" %>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+<!-- 🧾 EXISTING SCHOOL HEADER -->
+<% if (data && data.length > 0) { %>
+  <div class="card shadow-sm border-0">
+    <div
+      class="card-header bg-white border-bottom d-flex justify-content-between align-items-center"
+    >
+      <h5 class="mb-0 text-dark fw-semibold">
+        <i class="fas fa-list text-primary me-2"></i> Existing School Header
+      </h5>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-4">
+        <% data.forEach(item => { %>
+          <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100 hover-shadow transition-all">
+              <div class="card-body text-center p-4">
+                
+                <!-- 🏫 LOGO -->
+                <div class="mb-3">
+                  <% if (item.logo) { %>
+                    <img
+                      src="<%= item.logo %>"
+                      alt="School Logo"
+                      class="img-fluid rounded-circle border p-2"
+                      style="width: 100px; height: 100px; object-fit: contain;"
+                    />
+                  <% } else { %>
+                    <div
+                      class="d-inline-flex align-items-center justify-content-center bg-light border rounded-circle text-muted"
+                      style="width: 100px; height: 100px;"
+                    >
+                      <i class="fas fa-image fa-lg"></i>
+                    </div>
+                    <p class="small text-muted mt-1">No Logo</p>
+                  <% } %>
+                </div>
+
+                <!-- 🏷️ SCHOOL DETAILS -->
+                <h5 class="fw-bold mb-1 text-dark"><%= item.schoolName %></h5>
+                <p class="text-muted mb-3"><%= item.tagline || 'No tagline provided.' %></p>
+
+                <!-- 🖼️ BANNER IMAGE -->
+                <% if (item.bannerImage) { %>
+                  <div class="ratio ratio-16x9 mb-3 rounded overflow-hidden border">
+                    <img
+                      src="<%= item.bannerImage %>"
+                      alt="Banner Image"
+                      class="img-fluid w-100 h-100"
+                      style="object-fit: cover;"
+                    />
+                  </div>
+                <% } else { %>
+                  <div
+                    class="d-flex align-items-center justify-content-center bg-light border rounded mb-3"
+                    style="height: 120px;"
+                  >
+                    <i class="fas fa-image text-muted"></i>
+                    <span class="small text-muted ms-2">No banner uploaded</span>
+                  </div>
+                <% } %>
+
+                <!-- ⚙️ ACTION BUTTONS -->
+                <div class="d-flex justify-content-center gap-3">
+                  <!-- ✏️ Edit -->
+                  <button
+                    class="btn btn-sm btn-outline-primary px-3"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editModal"
+                    data-id="<%= item._id %>"
+                    data-schoolname="<%= item.schoolName %>"
+                    data-tagline="<%= item.tagline %>"
+                    data-logo="<%= item.logo %>"
+                    data-banner="<%= item.bannerImage %>"
+                  >
+                    <i class="fas fa-edit me-1"></i> Edit
+                  </button>
+
+                  <!-- 🗑️ Delete -->
+                  <a
+                    href="/home/header/<%= item._id %>"
+                    class="btn btn-sm btn-outline-danger px-3"
+                    onclick="return confirm('Are you sure you want to delete this header?');"
+                  >
+                    <i class="fas fa-trash me-1"></i> Delete
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+<% } else { %>
+  <div class="alert alert-info shadow-sm">
+    <i class="fas fa-info-circle me-2"></i>
+    No school header has been added yet. Please add one using the form above.
+  </div>
+<% } %>
+
+<style>
+  .hover-shadow:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1) !important;
+  }
+  .transition-all {
+    transition: all 0.2s ease-in-out;
+  }
+</style>
+
+</section>
+
+<div
+  class="modal fade"
+  id="editModal"
+  tabindex="-1"
+  aria-labelledby="editModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow">
+      <form id="editForm" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="_method" value="PUT" />
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">
+            <i class="fas fa-edit me-2 text-primary"></i>Edit School Header
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body row g-3">
+          <div class="col-md-12">
+            <label class="form-label fw-semibold">School Name</label>
+            <input
+              type="text"
+              name="schoolName"
+              id="editSchoolName"
+              class="form-control shadow-sm"
+              required
+            />
+          </div>
+          <div class="col-md-12">
+            <label class="form-label fw-semibold">Tagline</label>
+            <textarea
+              name="tagline"
+              id="editTagline"
+              rows="2"
+              class="form-control shadow-sm"
+            ></textarea>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Logo</label>
+            <input
+              type="file"
+              name="logo"
+              class="form-control shadow-sm"
+              accept="image/*"
+            />
+            <img id="previewLogo" class="img-thumbnail mt-2" style="max-height: 80px;" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Banner Image</label>
+            <input
+              type="file"
+              name="bannerImage"
+              class="form-control shadow-sm"
+              accept="image/*"
+            />
+            <img id="previewBanner" class="img-thumbnail mt-2" style="max-height: 80px;" />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button class="btn btn-primary">
+            <i class="fas fa-save me-2"></i> Update
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const editModal = document.getElementById("editModal");
+  const editForm = document.getElementById("editForm");
+
+  editModal.addEventListener("show.bs.modal", function (event) {
+    const button = event.relatedTarget;
+    const id = button.getAttribute("data-id");
+    const schoolName = button.getAttribute("data-schoolname");
+    const tagline = button.getAttribute("data-tagline");
+    const logo = button.getAttribute("data-logo");
+    const banner = button.getAttribute("data-banner");
+
+    editForm.action = `/home/header/${id}`;
+    editForm.querySelector("#editSchoolName").value = schoolName || "";
+    editForm.querySelector("#editTagline").value = tagline || "";
+    document.getElementById("previewLogo").src = logo || "";
+    document.getElementById("previewBanner").src = banner || "";
+  });
+</script>

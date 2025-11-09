@@ -1,0 +1,39 @@
+<div class="card mt-4">
+  <div class="card-header bg-white">
+    <h5 class="mb-0 fw-semibold text-dark">
+      <i class="fas fa-list me-2 text-primary"></i> Existing <%= title %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <% if (data && data.length > 0) { %>
+      <div class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead>
+            <tr>
+              <% fields.forEach(f => { %>
+                <th class="text-capitalize"><%= f %></th>
+              <% }) %>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% data.forEach(item => { %>
+              <tr>
+                <% fields.forEach(f => { %>
+                  <td><%= item[f] || '-' %></td>
+                <% }) %>
+                <td class="text-end">
+                  <form action="<%= deletePath %>/<%= item._id %>" method="POST" style="display:inline;">
+                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <p class="text-muted">No <%= title.toLowerCase() %> added yet.</p>
+    <% } %>
+  </div>
+</div>

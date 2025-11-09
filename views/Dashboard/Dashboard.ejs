@@ -1,0 +1,134 @@
+<main class="container py-4">
+    <div class="page-header mb-4 text-center">
+      <h1 class="page-title">
+        <i class="fas fa-tachometer-alt text-primary me-2"></i> School Dashboard
+      </h1>
+      <p class="text-muted">Welcome to your school control center.</p>
+    </div>
+
+    <!-- 📊 STATS OVERVIEW -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-3">
+        <div class="card card-stat shadow-sm border-0 text-center">
+          <div class="card-body">
+            <i class="fas fa-building fa-2x text-primary mb-2"></i>
+            <h5 class="fw-semibold">Facilities</h5>
+            <h3><%= facilities?.length || 0 %></h3>
+            <a href="/home/facilities" class="btn btn-sm btn-outline-primary mt-2">Manage</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card card-stat shadow-sm border-0 text-center">
+          <div class="card-body">
+            <i class="fas fa-newspaper fa-2x text-success mb-2"></i>
+            <h5 class="fw-semibold">News</h5>
+            <h3><%= news?.length || 0 %></h3>
+            <a href="/home/news" class="btn btn-sm btn-outline-success mt-2">Manage</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card card-stat shadow-sm border-0 text-center">
+          <div class="card-body">
+            <i class="fas fa-users fa-2x text-warning mb-2"></i>
+            <h5 class="fw-semibold">Testimonials</h5>
+            <h3><%= testimonials?.length || 0 %></h3>
+            <a href="/home/testimonials" class="btn btn-sm btn-outline-warning mt-2">Manage</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card card-stat shadow-sm border-0 text-center">
+          <div class="card-body">
+            <i class="fas fa-video fa-2x text-danger mb-2"></i>
+            <h5 class="fw-semibold">Videos</h5>
+            <h3><%= videos?.length || 0 %></h3>
+            <a href="/home/videos" class="btn btn-sm btn-outline-danger mt-2">Manage</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🏫 SCHOOL HEADER -->
+    <section class="mb-5">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between">
+          <h5 class="mb-0 fw-semibold text-dark">
+            <i class="fas fa-school text-primary me-2"></i> School Information
+          </h5>
+          <a href="/home/header" class="btn btn-sm btn-outline-primary">Edit Header</a>
+        </div>
+        <div class="card-body">
+          <% if (header) { %>
+            <div class="row align-items-center">
+              <div class="col-md-3">
+                <% if (header.logo) { %>
+                  <img src="<%= header.logo %>" alt="Logo" class="img-fluid rounded shadow-sm" />
+                <% } %>
+              </div>
+              <div class="col-md-9">
+                <h4><%= header.schoolName %></h4>
+                <p class="text-muted"><%= header.tagline || "No tagline set" %></p>
+              </div>
+            </div>
+          <% } else { %>
+            <p class="text-muted">No header information available.</p>
+          <% } %>
+        </div>
+      </div>
+    </section>
+
+    <!-- 🧑‍🏫 PRINCIPAL -->
+    <section class="mb-5">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between">
+          <h5 class="mb-0 fw-semibold text-dark">
+            <i class="fas fa-user-tie text-info me-2"></i> Principal Message
+          </h5>
+          <a href="/home/principal" class="btn btn-sm btn-outline-info">Edit</a>
+        </div>
+        <div class="card-body">
+          <% if (principal) { %>
+            <div class="row align-items-center">
+              <div class="col-md-3">
+                <% if (principal.image) { %>
+                  <img src="<%= principal.image %>" alt="Principal" class="img-fluid rounded shadow-sm" />
+                <% } %>
+              </div>
+              <div class="col-md-9">
+                <h5><%= principal.name %></h5>
+                <p><%= principal.message %></p>
+              </div>
+            </div>
+          <% } else { %>
+            <p class="text-muted">Principal message not added yet.</p>
+          <% } %>
+        </div>
+      </div>
+    </section>
+
+    <!-- 📞 CONTACT -->
+    <section class="mb-5">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-white border-bottom d-flex align-items-center justify-content-between">
+          <h5 class="mb-0 fw-semibold text-dark">
+            <i class="fas fa-phone text-success me-2"></i> Contact Details
+          </h5>
+          <a href="/home/contact" class="btn btn-sm btn-outline-success">Edit Contact</a>
+        </div>
+        <div class="card-body">
+          <% if (contact) { %>
+            <p><i class="fas fa-map-marker-alt me-2 text-danger"></i> <%= contact.address || "N/A" %></p>
+            <p><i class="fas fa-envelope me-2 text-primary"></i> <%= contact.email || "N/A" %></p>
+            <p><i class="fas fa-phone me-2 text-success"></i> <%= contact.phone || "N/A" %></p>
+          <% } else { %>
+            <p class="text-muted">Contact information not available.</p>
+          <% } %>
+        </div>
+      </div>
+    </section>
+  </main>
