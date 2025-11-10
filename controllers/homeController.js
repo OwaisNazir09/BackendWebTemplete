@@ -1,76 +1,60 @@
 const {
-  // 🏠 HEADER
   getAllHeaders,
   createHeader,
   updateHeaderById,
   deleteHeaderById,
-
-  // 🎞️ SLIDER
   getAllSliders,
   createSlider,
   updateSliderById,
   deleteSliderById,
-
-  // 📄 ABOUT
   getAllAbouts,
   createAbout,
   updateAboutById,
   deleteAboutById,
-
-  // 👨‍🏫 PRINCIPAL
   getAllPrincipals,
   createPrincipal,
   updatePrincipalById,
   deletePrincipalById,
-
-  // 🏫 FACILITIES
   getAllFacilities,
   createFacilities,
   updateFacilitiesById,
   deleteFacilitiesById,
-
-  // 📰 NEWS
   getAllNews,
   createNews,
   updateNewsById,
   deleteNewsById,
-
-  // 🎥 VIDEOS
   getAllVideos,
   createVideos,
   updateVideosById,
   deleteVideosById,
-
-  // 📝 APPLY NOW
   getAllApply,
   createApply,
   updateApplyById,
   deleteApplyById,
-
-  // 💬 TESTIMONIALS
   getAllTestimonials,
   createTestimonials,
   updateTestimonialsById,
   deleteTestimonialsById,
-
-  // 💡 WHY US
   getAllWhyUs,
   createWhyUs,
   updateWhyUsById,
   deleteWhyUsById,
-
   getAllContact,
   createContact,
   updateContactById,
   deleteContactById,
 } = require("../services/homeService");
 
+const bufferToDataUri = (file) =>
+  file
+    ? `data:${file.mimetype};base64,${file.buffer.toString("base64")}`
+    : null;
+
 const getHeader = async (req, res) => {
   try {
     const headers = await getAllHeaders();
     res.render("home/header", { title: "Header Section", data: headers });
   } catch (error) {
-    console.error("Error loading header:", error.message);
     res.render("home/header", {
       title: "Header Section",
       message: error.message,
@@ -81,20 +65,12 @@ const getHeader = async (req, res) => {
 const createHeaderCtrl = async (req, res) => {
   try {
     const data = { ...req.body };
-
-    if (req.files) {
-      if (req.files.logo && req.files.logo[0]) {
-        data.logo = `/uploads/${req.files.logo[0].filename}`;
-      }
-      if (req.files.bannerImage && req.files.bannerImage[0]) {
-        data.bannerImage = `/uploads/${req.files.bannerImage[0].filename}`;
-      }
-    }
-
+    if (req.files?.logo?.[0]) data.logo = bufferToDataUri(req.files.logo[0]);
+    if (req.files?.bannerImage?.[0])
+      data.bannerImage = bufferToDataUri(req.files.bannerImage[0]);
     await createHeader(data);
     res.redirect("/home/header");
   } catch (error) {
-    console.error(" Error creating header:", error.message);
     res.status(400).send({ message: error.message });
   }
 };
@@ -102,20 +78,12 @@ const createHeaderCtrl = async (req, res) => {
 const updateHeaderCtrl = async (req, res) => {
   try {
     const data = { ...req.body };
-
-    if (req.files) {
-      if (req.files.logo && req.files.logo[0]) {
-        data.logo = `/uploads/${req.files.logo[0].filename}`;
-      }
-      if (req.files.bannerImage && req.files.bannerImage[0]) {
-        data.bannerImage = `/uploads/${req.files.bannerImage[0].filename}`;
-      }
-    }
-
+    if (req.files?.logo?.[0]) data.logo = bufferToDataUri(req.files.logo[0]);
+    if (req.files?.bannerImage?.[0])
+      data.bannerImage = bufferToDataUri(req.files.bannerImage[0]);
     await updateHeaderById(req.params.id, data);
     res.redirect("/home/header");
   } catch (error) {
-    console.error("Error updating header:", error.message);
     res.status(400).send({ message: error.message });
   }
 };
@@ -125,14 +93,10 @@ const deleteHeaderCtrl = async (req, res) => {
     await deleteHeaderById(req.params.id);
     res.redirect("/home/header");
   } catch (error) {
-    console.error("Error deleting header:", error.message);
     res.status(400).send({ message: error.message });
   }
 };
 
-/* -------------------------------------------------------------------------- */
-/* 🎞️ SLIDER SECTION */
-/* -------------------------------------------------------------------------- */
 const getSlider = async (req, res) => {
   try {
     const sliders = await getAllSliders();
@@ -148,26 +112,19 @@ const getSlider = async (req, res) => {
 const createSliderCtrl = async (req, res) => {
   try {
     const data = { ...req.body };
-
-    if (req.file) {
-      data.imageUrl = `/uploads/${req.file.filename}`;
-    }
-
-    if (!data.imageUrl) {
-      throw new Error("Image is required for slider.");
-    }
-
+    if (req.file) data.imageUrl = bufferToDataUri(req.file);
     await createSlider(data);
     res.redirect("/home/slider");
   } catch (error) {
-    console.error("Error creating slider:", error.message);
     res.status(400).send({ message: error.message });
   }
 };
 
 const updateSliderCtrl = async (req, res) => {
   try {
-    await updateSliderById(req.params.id, req.body);
+    const data = { ...req.body };
+    if (req.file) data.imageUrl = bufferToDataUri(req.file);
+    await updateSliderById(req.params.id, data);
     res.redirect("/home/slider");
   } catch (error) {
     res.status(400).send({ message: error.message });
@@ -183,9 +140,6 @@ const deleteSliderCtrl = async (req, res) => {
   }
 };
 
-/* -------------------------------------------------------------------------- */
-/* 📄 ABOUT SECTION */
-/* -------------------------------------------------------------------------- */
 const getAbout = async (req, res) => {
   try {
     const abouts = await getAllAbouts();
@@ -201,15 +155,10 @@ const getAbout = async (req, res) => {
 const createAboutCtrl = async (req, res) => {
   try {
     const data = { ...req.body };
-
-    if (req.file) {
-      data.image = `/uploads/${req.file.filename}`;
-    }
-
+    if (req.file) data.image = bufferToDataUri(req.file);
     await createAbout(data);
     res.redirect("/home/about");
   } catch (error) {
-    console.error("Error creating About:", error.message);
     res.status(400).send({ message: error.message });
   }
 };
@@ -217,16 +166,10 @@ const createAboutCtrl = async (req, res) => {
 const updateAboutCtrl = async (req, res) => {
   try {
     const data = { ...req.body };
-
-    if (req.file) {
-      data.image = `/uploads/${req.file.filename}`;
-    }
-
+    if (req.file) data.image = bufferToDataUri(req.file);
     await updateAboutById(req.params.id, data);
-
     res.redirect("/home/about");
   } catch (error) {
-    console.error("Error updating About:", error.message);
     res.status(400).send({ message: error.message });
   }
 };
@@ -258,16 +201,10 @@ const getPrincipal = async (req, res) => {
 const createPrincipalCtrl = async (req, res) => {
   try {
     const data = { ...req.body };
-
-    // ✅ Handle uploaded image if present
-    if (req.file) {
-      data.image = `/uploads/${req.file.filename}`;
-    }
-
+    if (req.file) data.image = bufferToDataUri(req.file);
     await createPrincipal(data);
     res.redirect("/home/principal");
   } catch (error) {
-    console.error("Error creating principal:", error.message);
     res.status(400).send({ message: error.message });
   }
 };
@@ -275,18 +212,14 @@ const createPrincipalCtrl = async (req, res) => {
 const updatePrincipalCtrl = async (req, res) => {
   try {
     const data = { ...req.body };
-
-    if (req.file) {
-      data.image = `/uploads/${req.file.filename}`;
-    }
-
+    if (req.file) data.image = bufferToDataUri(req.file);
     await updatePrincipalById(req.params.id, data);
     res.redirect("/home/principal");
   } catch (error) {
-    console.error("Error updating principal:", error.message);
     res.status(400).send({ message: error.message });
   }
 };
+
 const deletePrincipalCtrl = async (req, res) => {
   try {
     await deletePrincipalById(req.params.id);
@@ -296,9 +229,6 @@ const deletePrincipalCtrl = async (req, res) => {
   }
 };
 
-/* -------------------------------------------------------------------------- */
-/* 🏫 FACILITIES SECTION */
-/* -------------------------------------------------------------------------- */
 const getFacilities = async (req, res) => {
   try {
     const facilities = await getAllFacilities();
@@ -313,18 +243,14 @@ const getFacilities = async (req, res) => {
     });
   }
 };
+
 const createFacilitiesCtrl = async (req, res) => {
   try {
     const data = { ...req.body };
-
-    if (req.file) {
-      data.image = `/uploads/${req.file.filename}`;
-    }
-
+    if (req.file) data.image = bufferToDataUri(req.file);
     await createFacilities(data);
     res.redirect("/home/facilities");
   } catch (error) {
-    console.error("Error creating facility:", error.message);
     res.status(400).send({ message: error.message });
   }
 };
@@ -332,18 +258,14 @@ const createFacilitiesCtrl = async (req, res) => {
 const updateFacilitiesCtrl = async (req, res) => {
   try {
     const data = { ...req.body };
-
-    if (req.file) {
-      data.image = `/uploads/${req.file.filename}`;
-    }
-
+    if (req.file) data.image = bufferToDataUri(req.file);
     await updateFacilitiesById(req.params.id, data);
     res.redirect("/home/facilities");
   } catch (error) {
-    console.error("Error updating facility:", error.message);
     res.status(400).send({ message: error.message });
   }
 };
+
 const deleteFacilitiesCtrl = async (req, res) => {
   try {
     await deleteFacilitiesById(req.params.id);
@@ -353,9 +275,6 @@ const deleteFacilitiesCtrl = async (req, res) => {
   }
 };
 
-/* -------------------------------------------------------------------------- */
-/* 📰 NEWS SECTION */
-/* -------------------------------------------------------------------------- */
 const getNews = async (req, res) => {
   try {
     const news = await getAllNews();
@@ -364,22 +283,15 @@ const getNews = async (req, res) => {
     res.render("home/news", { title: "News Section", message: error.message });
   }
 };
+
 const createNewsCtrl = async (req, res) => {
   try {
     const data = { ...req.body };
-
-    if (req.file) {
-      data.image = `/uploads/${req.file.filename}`;
-    }
-
-    if (!data.date) {
-      data.date = new Date();
-    }
-
+    if (req.file) data.image = bufferToDataUri(req.file);
+    if (!data.date) data.date = new Date();
     await createNews(data);
     res.redirect("/home/news");
   } catch (error) {
-    console.error("Error creating news:", error.message);
     res.status(400).send({ message: error.message });
   }
 };
@@ -387,18 +299,14 @@ const createNewsCtrl = async (req, res) => {
 const updateNewsCtrl = async (req, res) => {
   try {
     const data = { ...req.body };
-
-    if (req.file) {
-      data.image = `/uploads/${req.file.filename}`;
-    }
-
+    if (req.file) data.image = bufferToDataUri(req.file);
     await updateNewsById(req.params.id, data);
     res.redirect("/home/news");
   } catch (error) {
-    console.error("Error updating news:", error.message);
     res.status(400).send({ message: error.message });
   }
 };
+
 const deleteNewsCtrl = async (req, res) => {
   try {
     await deleteNewsById(req.params.id);
@@ -408,9 +316,6 @@ const deleteNewsCtrl = async (req, res) => {
   }
 };
 
-/* -------------------------------------------------------------------------- */
-/* 🎥 VIDEOS SECTION */
-/* -------------------------------------------------------------------------- */
 const getVideos = async (req, res) => {
   try {
     const videos = await getAllVideos();
@@ -426,16 +331,10 @@ const getVideos = async (req, res) => {
 const createVideosCtrl = async (req, res) => {
   try {
     const data = { ...req.body };
-
-    // ✅ Add thumbnail if uploaded
-    if (req.file) {
-      data.thumbnail = `/uploads/${req.file.filename}`;
-    }
-
+    if (req.file) data.thumbnail = bufferToDataUri(req.file);
     await createVideos(data);
     res.redirect("/home/videos");
   } catch (error) {
-    console.error("Error creating video:", error.message);
     res.status(400).send({ message: error.message });
   }
 };
@@ -443,18 +342,14 @@ const createVideosCtrl = async (req, res) => {
 const updateVideosCtrl = async (req, res) => {
   try {
     const data = { ...req.body };
-
-    if (req.file) {
-      data.thumbnail = `/uploads/${req.file.filename}`;
-    }
-
+    if (req.file) data.thumbnail = bufferToDataUri(req.file);
     await updateVideosById(req.params.id, data);
     res.redirect("/home/videos");
   } catch (error) {
-    console.error("Error updating video:", error.message);
     res.status(400).send({ message: error.message });
   }
 };
+
 const deleteVideosCtrl = async (req, res) => {
   try {
     await deleteVideosById(req.params.id);
@@ -503,9 +398,6 @@ const deleteApplyCtrl = async (req, res) => {
   }
 };
 
-/* -------------------------------------------------------------------------- */
-/* 💬 TESTIMONIALS SECTION */
-/* -------------------------------------------------------------------------- */
 const getTestimonials = async (req, res) => {
   try {
     const testimonials = await getAllTestimonials();
@@ -524,13 +416,10 @@ const getTestimonials = async (req, res) => {
 const createTestimonialsCtrl = async (req, res) => {
   try {
     const data = { ...req.body };
-    if (req.file) {
-      data.image = `/uploads/${req.file.filename}`;
-    }
+    if (req.file) data.image = bufferToDataUri(req.file);
     await createTestimonials(data);
     res.redirect("/home/testimonials");
   } catch (error) {
-    console.error("Error creating testimonial:", error.message);
     res.status(400).send({ message: error.message });
   }
 };
@@ -538,16 +427,14 @@ const createTestimonialsCtrl = async (req, res) => {
 const updateTestimonialsCtrl = async (req, res) => {
   try {
     const data = { ...req.body };
-    if (req.file) {
-      data.image = `/uploads/${req.file.filename}`;
-    }
+    if (req.file) data.image = bufferToDataUri(req.file);
     await updateTestimonialsById(req.params.id, data);
     res.redirect("/home/testimonials");
   } catch (error) {
-    console.error("Error updating testimonial:", error.message);
     res.status(400).send({ message: error.message });
   }
 };
+
 const deleteTestimonialsCtrl = async (req, res) => {
   try {
     await deleteTestimonialsById(req.params.id);
@@ -557,9 +444,6 @@ const deleteTestimonialsCtrl = async (req, res) => {
   }
 };
 
-/* -------------------------------------------------------------------------- */
-/* 💡 WHY US SECTION */
-/* -------------------------------------------------------------------------- */
 const getWhyUs = async (req, res) => {
   try {
     const whyus = await getAllWhyUs();
@@ -599,9 +483,6 @@ const deleteWhyUsCtrl = async (req, res) => {
   }
 };
 
-/* -------------------------------------------------------------------------- */
-/* 📞 CONTACT SECTION */
-/* -------------------------------------------------------------------------- */
 const getContact = async (req, res) => {
   try {
     const contact = await getAllContact();
@@ -641,9 +522,6 @@ const deleteContactCtrl = async (req, res) => {
   }
 };
 
-/* -------------------------------------------------------------------------- */
-/* 📦 EXPORT ALL CONTROLLERS */
-/* -------------------------------------------------------------------------- */
 module.exports = {
   getHeader,
   createHeaderCtrl,

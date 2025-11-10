@@ -114,7 +114,7 @@ router.post(
   upload.single("thumbnail"),
   homeController.updateVideosCtrl
 );
-router.delete("/videos/:id", auth, homeController.deleteVideosCtrl);
+router.get("/videos/:id", auth, homeController.deleteVideosCtrl);
 
 router.get("/apply", auth, homeController.getApply);
 router.post("/apply", auth, homeController.createApplyCtrl);
